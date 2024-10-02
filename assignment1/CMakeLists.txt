@@ -7,24 +7,16 @@ project(Assignment1 VERSION 1.0
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+set(UTEST_HEADER_DIR ${CMAKE_BINARY_DIR}/external/utest)
+file(DOWNLOAD
+        https://raw.githubusercontent.com/sheredom/utest.h/master/utest.h
+        ${UTEST_HEADER_DIR}/utest.h
 )
-
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
-enable_testing()
 
 add_executable(main src/main.cpp src/integration.cpp)
-
 add_executable(tests test/test_integration.cpp src/integration.cpp)
-target_link_libraries(
-  tests
-  GTest::gtest_main
-)
 
-include(GoogleTest)
-gtest_discover_tests(tests)
+target_include_directories(tests PRIVATE ${UTEST_HEADER_DIR})
+
+enable_testing()
+add_test(NAME IntegrationTest COMMAND tests)
